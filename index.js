@@ -30,13 +30,35 @@ async function run () {
         const serviceCollection = client.db('creativeCaptures').collection('services');
 
         //get all the services from database
+        // app.get('/services', async (req, res) => {
+        //     const query = {};
+        //     const cursor = serviceCollection.find(query);
+        //     const services = await cursor.limit(3).toArray();
+        //     res.send(services);
+        // })
+
+        //get the services from database
         app.get('/services', async (req, res) => {
+            
+            const size = parseInt(req.query.size);
+            console.log(size);
+            
             const query = {};
             const cursor = serviceCollection.find(query);
-            const services = await cursor.limit(3).toArray();
-            res.send(services);
+            const services = await cursor.limit(size).toArray();
+            res.send({services});
+        })
+
+        //add service on database by the user
+        app.post ('/services', async (req, res) => {
+            const serviceInfo = req.body;
+            console.log(serviceInfo);
+            const result = await serviceCollection.insertOne(serviceInfo)
+            res.send(result);
         })
     }
+
+
     finally{
 
     }

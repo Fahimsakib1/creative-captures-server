@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -29,6 +29,8 @@ async function run () {
     try{
         const serviceCollection = client.db('creativeCaptures').collection('services');
 
+        const reviewCollection = client.db('creativeCaptures').collection('reviews');
+
         //get all the services from database
         // app.get('/services', async (req, res) => {
         //     const query = {};
@@ -37,16 +39,16 @@ async function run () {
         //     res.send(services);
         // })
 
+
         //get the services from database
         app.get('/services', async (req, res) => {
-            
             const size = parseInt(req.query.size);
             console.log(size);
             
             const query = {};
             const cursor = serviceCollection.find(query);
             const services = await cursor.limit(size).toArray();
-            res.send({services});
+            res.send(services);
         })
 
         //add service on database by the user
@@ -54,6 +56,23 @@ async function run () {
             const serviceInfo = req.body;
             console.log(serviceInfo);
             const result = await serviceCollection.insertOne(serviceInfo)
+            res.send(result);
+        })
+
+        //get a specific service data
+        app.get('/services/:id', async (req, res) => {
+            const id = req.params.id;
+            // console.log("Service ID From Client Side: ", id);
+            const query = {_id: ObjectId(id)};
+            const service = await serviceCollection.findOne(query);
+            res.send(service);
+        })
+
+        //add or post reviews on the database
+        app.post ('/reviews', async (req, res) => {
+            const reviewInfo = req.body;
+            console.log(reviewInfo);
+            const result = await reviewCollection.insertOne(reviewInfo);
             res.send(result);
         })
     }

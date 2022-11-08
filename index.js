@@ -75,6 +75,23 @@ async function run () {
             const result = await reviewCollection.insertOne(reviewInfo);
             res.send(result);
         })
+
+        //get the reviews by user email
+        app.get('/reviews', async (req, res) => {
+            
+            const email = req.query.email;
+            console.log(email);
+            let query = {};
+            if(email){
+                query = {
+                    email: email
+                }
+            }
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews)
+
+        })
     }
 
 

@@ -90,7 +90,15 @@ async function run () {
             const cursor = reviewCollection.find(query);
             const reviews = await cursor.toArray();
             res.send(reviews)
+        })
 
+        //delete user review based on id
+        app.delete('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log("Trying to Delete The user ID: ", id)
+            const query = {_id: ObjectId(id)};
+            const result = await reviewCollection.deleteOne(query);
+            res.send(result);
         })
     }
 

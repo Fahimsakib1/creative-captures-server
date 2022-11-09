@@ -31,15 +31,6 @@ async function run () {
 
         const reviewCollection = client.db('creativeCaptures').collection('reviews');
 
-        //get all the services from database
-        // app.get('/services', async (req, res) => {
-        //     const query = {};
-        //     const cursor = serviceCollection.find(query);
-        //     const services = await cursor.limit(3).toArray();
-        //     res.send(services);
-        // })
-
-
         //get the services from database
         app.get('/services', async (req, res) => {
             const size = parseInt(req.query.size);
@@ -76,6 +67,7 @@ async function run () {
             res.send(result);
         })
 
+
         //get the reviews by user email
         app.get('/reviews', async (req, res) => {
             
@@ -105,24 +97,66 @@ async function run () {
 
 
         //get a specific review data
+        // app.get('/reviews/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     console.log("Review of Service By Service ID From Client Side: ", id);
+
+        //     let query = {};
+        //     if(id){
+        //         query  = {
+        //             service_id: id
+        //         }
+        //     }
+
+        //     const review = await reviewCollection.findOne(query);
+        //     res.send(review);
+            
+        //     // const query = {service_id: id};
+        //     // const review = await reviewCollection.findOne(query);
+        //     // res.send(review);
+
+        // })
+
+
+
+        //update service review => ektu agey eita re comment remove korchilam
         app.get('/reviews/:id', async (req, res) => {
             const id = req.params.id;
-            console.log("Review of Service ID From Client Side: ", id);
+            console.log("Review of service by Review ID From Client Side: ", id);
+            const query = { _id: ObjectId(id) };
+            const result = await reviewCollection.findOne(query);
+            res.send(result);
+        })
 
-            let query = {};
-            if(id){
-                query  = {
-                    service_id: id
+
+
+
+        app.put('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+
+            //this is the previous line befor changing
+            //const filter = {service_id: id};
+
+             //this is the new line that I ahve added just
+            const filter = { _id: ObjectId(id) };
+
+
+
+
+            const reviewInfo = req.body;
+            console.log(reviewInfo);
+
+            const option = {upsert: true};
+            const updatedReview = {
+                $set : {
+                    review: reviewInfo.review,
+                    reviewDate: reviewInfo.reviewDate,
+                    service_rating: reviewInfo.service_rating
                 }
             }
-
-            const review = await reviewCollection.findOne(query);
-            res.send(review);
-            
-            // const query = {service_id: id};
-            // const review = await reviewCollection.findOne(query);
-            // res.send(review);
-
+            const result = await reviewCollection.updateOne(filter, updatedReview, option)
+            res.send(result);
         })
 
 

@@ -91,6 +91,7 @@ async function run () {
             const reviews = await cursor.toArray();
             res.send(reviews)
         })
+        
 
         //delete user review based on id
         app.delete('/reviews/:id', async (req, res) => {
@@ -100,6 +101,31 @@ async function run () {
             const result = await reviewCollection.deleteOne(query);
             res.send(result);
         })
+
+
+
+        //get a specific review data
+        app.get('/reviews/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log("Review of Service ID From Client Side: ", id);
+
+            let query = {};
+            if(id){
+                query  = {
+                    service_id: id
+                }
+            }
+
+            const review = await reviewCollection.findOne(query);
+            res.send(review);
+            
+            // const query = {service_id: id};
+            // const review = await reviewCollection.findOne(query);
+            // res.send(review);
+
+        })
+
+
     }
 
 

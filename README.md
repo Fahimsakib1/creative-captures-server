@@ -1,4 +1,4 @@
-# Learner Academy
+# Creative Captures
 Creative Captures is a online Service Review platform  where the user can add reviews of the services he/she has  availed for. For giving the reviews a user has to be logged in. After successful login one can add review of any specific service. Besides there are edit and deleted options for the reviews. There are many other features also which are described below.
 
 This website is made by using React Router DOM, Firebase Authentication, amd Mongodb as the database. CRUD operation is the major part of this project. Besides tailwind css is used for the styling purpose. Some component libraries are also used for the design. React toastify and sweet alert is added to show the alerts for better user experience.

@@ -25,8 +25,8 @@ console.log(uri);
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-async function run () {
-    try{
+async function run() {
+    try {
         const serviceCollection = client.db('creativeCaptures').collection('services');
 
         const reviewCollection = client.db('creativeCaptures').collection('reviews');
@@ -35,7 +35,7 @@ async function run () {
         app.get('/services', async (req, res) => {
             const size = parseInt(req.query.size);
             console.log(size);
-            
+
             const query = {};
             const cursor = serviceCollection.find(query);
             const services = await cursor.limit(size).toArray();
@@ -43,7 +43,7 @@ async function run () {
         })
 
         //add service on database by the user
-        app.post ('/services', async (req, res) => {
+        app.post('/services', async (req, res) => {
             const serviceInfo = req.body;
             console.log(serviceInfo);
             const result = await serviceCollection.insertOne(serviceInfo)
@@ -54,13 +54,13 @@ async function run () {
         app.get('/services/:id', async (req, res) => {
             const id = req.params.id;
             // console.log("Service ID From Client Side: ", id);
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const service = await serviceCollection.findOne(query);
             res.send(service);
         })
 
         //add or post reviews on the database
-        app.post ('/reviews', async (req, res) => {
+        app.post('/reviews', async (req, res) => {
             const reviewInfo = req.body;
             console.log(reviewInfo);
             const result = await reviewCollection.insertOne(reviewInfo);
@@ -70,11 +70,11 @@ async function run () {
 
         //get the reviews by user email
         app.get('/reviews', async (req, res) => {
-            
+
             const email = req.query.email;
             console.log(email);
             let query = {};
-            if(email){
+            if (email) {
                 query = {
                     email: email
                 }
@@ -83,13 +83,13 @@ async function run () {
             const reviews = await cursor.toArray();
             res.send(reviews)
         })
-        
+
 
         //delete user review based on id
         app.delete('/reviews/:id', async (req, res) => {
             const id = req.params.id;
             console.log("Trying to Delete The user ID: ", id)
-            const query = {_id: ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await reviewCollection.deleteOne(query);
             res.send(result);
         })
@@ -110,7 +110,7 @@ async function run () {
 
         //     const review = await reviewCollection.findOne(query);
         //     res.send(review);
-            
+
         //     // const query = {service_id: id};
         //     // const review = await reviewCollection.findOne(query);
         //     // res.send(review);
@@ -122,7 +122,7 @@ async function run () {
         //update service review => ektu agey eita re comment remove korchilam
         app.get('/reviews/:id', async (req, res) => {
             const id = req.params.id;
-            console.log("Review of service by Review ID From Client Side: ", id);
+            console.log("Review of Service by Review ID From Client Side: ", id);
             const query = { _id: ObjectId(id) };
             const result = await reviewCollection.findOne(query);
             res.send(result);
@@ -138,18 +138,15 @@ async function run () {
             //this is the previous line befor changing
             //const filter = {service_id: id};
 
-             //this is the new line that I ahve added just
+            //this is the new line that I have added just
             const filter = { _id: ObjectId(id) };
-
-
-
 
             const reviewInfo = req.body;
             console.log(reviewInfo);
 
-            const option = {upsert: true};
+            const option = { upsert: true };
             const updatedReview = {
-                $set : {
+                $set: {
                     review: reviewInfo.review,
                     reviewDate: reviewInfo.reviewDate,
                     service_rating: reviewInfo.service_rating
@@ -160,10 +157,30 @@ async function run () {
         })
 
 
+
+
+
+
+
+        // the the reviews data by service id with query params
+        app.get('/reviewss', async (req, res) => {
+            let query = {};
+            if(req.query.service_id){
+                query = {
+                    service_id: req.query.service_id
+                }
+            }
+            const sortReview = {'_id' : -1}
+            const cursor =  reviewCollection.find(query).sort(sortReview);
+            const review = await cursor.toArray();
+            res.send(review)
+        })
+
+
     }
 
 
-    finally{
+    finally {
 
     }
 }

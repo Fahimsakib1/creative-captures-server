@@ -2,10 +2,15 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
 
 //requite dot env
 require('dotenv').config();
+
+// console.log(process.env.DB_USER);
+// console.log(process.env.DB_PASSWORD);
+// console.log(process.env.ACCESS_TOKEN_SECRET);
 
 
 //middle wares
@@ -16,14 +21,37 @@ app.use(express.json());
 //username: creativeCaptures
 //pass: RLxtx8RDSlAmhfKR
 
-//db_name: creativeCaptures
-//collection_name: services
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.axoxgat.mongodb.net/?retryWrites=true&w=majority`;
 
 console.log(uri);
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+
+
+////function for jwt token
+function verifyJWT(req, res, next) {
+    const authHeader = req.headers.authorization;
+    console.log(authHeader);
+
+    if (!authHeader) {
+        return res.status(401).send({ message: "Unauthorized Access" })
+    }
+    const token = authHeader.split(' ')[1];
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (error, decoded) {
+        if (error) {
+            return res.status(403).send({ message: "Forbidden Access" })
+        }
+
+        req.decoded = decoded;
+        next();
+    })
+}
+
+
+
 
 async function run() {
     try {
@@ -69,20 +97,39 @@ async function run() {
 
 
         //get the reviews by user email
-        app.get('/reviews', async (req, res) => {
+        app.get('/reviews', verifyJWT, async (req, res) => {
 
-            const email = req.query.email;
-            console.log(email);
+            // const email = req.query.email;
+            // console.log(email);
+            // let query = {};
+            // if (email) {
+            //     query = {
+            //         email: email
+            //     }
+            // }
+            // const cursor = reviewCollection.find(query);
+            // const reviews = await cursor.toArray();
+            // res.send(reviews)
+
+
+            const decoded = req.decoded;
+            console.log(" Decoded inside reviews get API", decoded);
+
+            if(decoded.email !== req.query.email){
+                return res.status(403).send({message: "Forbidden Access"})
+            }
+
             let query = {};
-            if (email) {
+            if (req.query.email) {
                 query = {
-                    email: email
+                    email: req.query.email
                 }
             }
             const cursor = reviewCollection.find(query);
             const reviews = await cursor.toArray();
             res.send(reviews)
         })
+
 
 
         //delete user review based on id
@@ -119,7 +166,7 @@ async function run() {
 
 
 
-        //update service review => ektu agey eita re comment remove korchilam
+        //update service review 
         app.get('/reviews/:id', async (req, res) => {
             const id = req.params.id;
             console.log("Review of Service by Review ID From Client Side: ", id);
@@ -157,23 +204,27 @@ async function run() {
         })
 
 
-
-
-
-
-
         // the the reviews data by service id with query params
         app.get('/reviewss', async (req, res) => {
             let query = {};
-            if(req.query.service_id){
+            if (req.query.service_id) {
                 query = {
                     service_id: req.query.service_id
                 }
             }
-            const sortReview = {'_id' : -1}
-            const cursor =  reviewCollection.find(query).sort(sortReview);
+            const sortReview = { '_id': -1 }
+            const cursor = reviewCollection.find(query).sort(sortReview);
             const review = await cursor.toArray();
             res.send(review)
+        })
+
+
+        //code for jwt token
+        app.post('/jwt', async (req, res) => {
+            const user = req.body;
+            console.log("User From Sever side: ", user);
+            const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5h' });
+            res.send({ token })
         })
 
 

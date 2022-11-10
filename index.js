@@ -69,6 +69,7 @@ async function run() {
             const services = await cursor.limit(size).toArray();
             res.send(services);
         })
+        
 
         //add service on database by the user
         app.post('/services', async (req, res) => {
@@ -77,6 +78,7 @@ async function run() {
             const result = await serviceCollection.insertOne(serviceInfo)
             res.send(result);
         })
+
 
         //get a specific service data
         app.get('/services/:id', async (req, res) => {
@@ -98,19 +100,6 @@ async function run() {
 
         //get the reviews by user email
         app.get('/reviews', verifyJWT, async (req, res) => {
-
-            // const email = req.query.email;
-            // console.log(email);
-            // let query = {};
-            // if (email) {
-            //     query = {
-            //         email: email
-            //     }
-            // }
-            // const cursor = reviewCollection.find(query);
-            // const reviews = await cursor.toArray();
-            // res.send(reviews)
-
 
             const decoded = req.decoded;
             console.log(" Decoded inside reviews get API", decoded);
@@ -142,30 +131,6 @@ async function run() {
         })
 
 
-
-        //get a specific review data
-        // app.get('/reviews/:id', async (req, res) => {
-        //     const id = req.params.id;
-        //     console.log("Review of Service By Service ID From Client Side: ", id);
-
-        //     let query = {};
-        //     if(id){
-        //         query  = {
-        //             service_id: id
-        //         }
-        //     }
-
-        //     const review = await reviewCollection.findOne(query);
-        //     res.send(review);
-
-        //     // const query = {service_id: id};
-        //     // const review = await reviewCollection.findOne(query);
-        //     // res.send(review);
-
-        // })
-
-
-
         //update service review 
         app.get('/reviews/:id', async (req, res) => {
             const id = req.params.id;
@@ -174,8 +139,6 @@ async function run() {
             const result = await reviewCollection.findOne(query);
             res.send(result);
         })
-
-
 
 
         app.put('/reviews/:id', async (req, res) => {

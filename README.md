@@ -16,6 +16,7 @@ This is project is basically divided in two parts.
 - For deployment purpose I have hosted all the server data to vercel and add the vercel route link to get the from the client side
 - As I have implemented service review system in this website and my data set (means each service is unique and has its own details).
 - I have implemented CRUD operation in this website.
+- JWT is one of the core purpose of this project also. It helps to secure the server side. If a user's token is not verified then he cant go on that route in clint side.
 
 
 
@@ -25,3 +26,7 @@ Github Link Client Side: https://github.com/Porgramming-Hero-web-course/b6a11-se
 
 ### GitHub Link (Server Side) of This Project:
 Github Link Server Side:  https://github.com/Porgramming-Hero-web-course/b6a11-service-review-server-side-Fahimsakib1
+
+
+### Firebase Live Site Link:
+Live Site Link: https://creative-captures.web.app

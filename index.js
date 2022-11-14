@@ -64,8 +64,25 @@ async function run() {
             const size = parseInt(req.query.size);
             console.log(size);
 
-            const query = {};
-            const cursor = serviceCollection.find(query);
+            //query for price greater than 2000 and less than 5000
+            //const query = { price: { $gt: 4000, $lt: 7000} };
+            
+            //filter the services by Ascending and descending order
+            const service = req.query.service === 'asc' ? 1 : -1;
+
+            const search = req.query.search;
+            console.log(search);
+
+            let query = {};
+
+             //client side e kono kichu search korle tar result er jonno code
+            if(search.length){
+                query = {
+                    $text : {$search: search}
+                }
+            }
+
+            const cursor = serviceCollection.find(query).sort({price: service});
             const services = await cursor.limit(size).toArray();
             res.send(services);
         })
@@ -114,7 +131,7 @@ async function run() {
                     email: req.query.email
                 }
             }
-            const cursor = reviewCollection.find(query);
+            const cursor = reviewCollection.find(query).sort({reviewDate : -1});
             const reviews = await cursor.toArray();
             res.send(reviews)
         })
@@ -145,7 +162,7 @@ async function run() {
             const id = req.params.id;
             console.log(id);
 
-            //this is the previous line befor changing
+            //this is the previous line before changing
             //const filter = {service_id: id};
 
             //this is the new line that I have added just

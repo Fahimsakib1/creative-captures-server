@@ -21,12 +21,7 @@ This is project is basically divided in two parts.
 
 
 ### GitHub Link (Client Side) of This Project: 
-Github Link Client Side: https://github.com/Porgramming-Hero-web-course/b6a11-service-review-client-side-Fahimsakib1
-
-
-### GitHub Link (Server Side) of This Project:
-Github Link Server Side:  https://github.com/Porgramming-Hero-web-course/b6a11-service-review-server-side-Fahimsakib1
-
+Github Link Client Side: https://github.com/Fahimsakib1/creative-captures-client
 
 ### Firebase Live Site Link:
 Live Site Link: https://creative-captures.web.app

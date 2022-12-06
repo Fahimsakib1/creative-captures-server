@@ -59,6 +59,22 @@ async function run() {
 
         const reviewCollection = client.db('creativeCaptures').collection('reviews');
 
+        
+        //get only three services in home page from database
+        app.get('/threeServices', async (req, res) => {
+            const size = parseInt(req.query.size);
+            console.log(size);
+
+            const query = {};
+            const cursor = serviceCollection.find(query);
+            const services = await cursor.limit(size).toArray();
+            res.send(services);
+        })
+        
+        
+        
+        
+        
         //get the services from database
         app.get('/services', async (req, res) => {
             const size = parseInt(req.query.size);
